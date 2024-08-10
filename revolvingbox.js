@@ -33,22 +33,33 @@ const outline = new THREE.LineSegments(edges, outlineMaterial);
 scene.add(outline);
 
 // Variables for rotation speed and damping
-let rotationSpeed = 0.01;
-let targetRotationSpeed = 0.01;
+let rotationSpeedX = 0;
+let rotationSpeedY = 0;
 const damping = 0.95; // Factor by which speed is reduced each frame
 
 let mouseMoving = false;
+let lastMouseX = 0;
+let lastMouseY = 0;
 
 // Function to handle mouse movement
-function onMouseMove() {
-    mouseMoving = true;
-    targetRotationSpeed = 0.01; // Speed when mouse is moving
+function onMouseMove(event) {
+    if (!mouseMoving) {
+        mouseMoving = true;
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
+    } else {
+        const deltaX = event.clientX - lastMouseX;
+        const deltaY = event.clientY - lastMouseY;
+        rotationSpeedX += deltaX * 0.01;
+        rotationSpeedY += deltaY * 0.01;
+        lastMouseX = event.clientX;
+        lastMouseY = event.clientY;
+    }
 }
 
 // Function to handle mouse stop
 function onMouseStop() {
     mouseMoving = false;
-    targetRotationSpeed = 0; // Target speed when mouse stops
 }
 
 // Attach event listeners for mouse movements
@@ -62,17 +73,19 @@ function animate() {
 
     // Gradually adjust rotation speed
     if (mouseMoving) {
-        rotationSpeed = targetRotationSpeed;
+        // Rotation speed is updated in onMouseMove
     } else {
-        rotationSpeed *= damping; // Apply damping to rotation speed
-        if (Math.abs(rotationSpeed) < 0.001) {
-            rotationSpeed = 0; // Stop rotation when very slow
+        rotationSpeedX *= damping; // Apply damping to rotation speed
+        rotationSpeedY *= damping; // Apply damping to rotation speed
+        if (Math.abs(rotationSpeedX) < 0.001 && Math.abs(rotationSpeedY) < 0.001) {
+            rotationSpeedX = 0; // Stop rotation when very slow
+            rotationSpeedY = 0; // Stop rotation when very slow
         }
     }
 
-    // Rotate the cube for some basic animation
-    cube.rotation.x += rotationSpeed;
-    cube.rotation.y += rotationSpeed;
+    // Apply rotation to the cube
+    cube.rotation.x += rotationSpeedY;
+    cube.rotation.y += rotationSpeedX;
 
     renderer.render(scene, camera);
 }
