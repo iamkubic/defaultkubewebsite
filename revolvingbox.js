@@ -17,9 +17,12 @@ const material = new THREE.MeshBasicMaterial({
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-// Create and add black edges for the cube
+// Create and add bold black edges for the cube
 const edgesGeometry = new THREE.EdgesGeometry(geometry);
-const edgesMaterial = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 }); // Black edges
+const edgesMaterial = new THREE.LineBasicMaterial({
+    color: 0x000000, // Black edges
+    linewidth: 5, // Increase the line width to make edges bold
+});
 const edges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
 scene.add(edges);
 
