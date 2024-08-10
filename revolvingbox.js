@@ -40,6 +40,23 @@ function randomizeRotation() {
 }
 randomizeRotation(); // Initialize with random rotation
 
+// Parallax effect
+document.addEventListener('mousemove', (event) => {
+    const { clientX, clientY } = event;
+
+    // Calculate the mouse position relative to the center of the screen
+    const mouseX = (clientX / window.innerWidth) * 2 - 1;
+    const mouseY = -(clientY / window.innerHeight) * 2 + 1;
+
+    // Apply the parallax effect by adjusting the cube's rotation
+    cube.rotation.x += mouseY * 0.02;
+    cube.rotation.y += mouseX * 0.02;
+
+    // Update edges with the same rotation
+    edges.rotation.x = cube.rotation.x;
+    edges.rotation.y = cube.rotation.y;
+});
+
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
