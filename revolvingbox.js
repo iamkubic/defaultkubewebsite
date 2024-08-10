@@ -47,13 +47,6 @@ randomizeRotation(); // Initialize with random rotation
 
 let mouseMoved = false;
 let mouseMoveTimeout;
-let autoRotateEnabled = true;
-
-// Ramp up and ramp down parameters
-let rotationSpeed = 0.003;
-const maxRotationSpeed = 0.003;
-const acceleration = 0.0001; // Speed increase per frame when ramping up
-const deceleration = 0.0002; // Speed decrease per frame when ramping down
 
 // Parallax effect
 document.addEventListener('mousemove', (event) => {
@@ -81,41 +74,14 @@ document.addEventListener('mousemove', (event) => {
     }, 1000); // 1 second after mouse stops moving
 });
 
-// Toggle auto-rotation when clicking outside the cube
-document.addEventListener('click', (event) => {
-    const mouse = new THREE.Vector2();
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    const raycaster = new THREE.Raycaster();
-    raycaster.setFromCamera(mouse, camera);
-
-    const intersects = raycaster.intersectObject(cube);
-    
-    if (intersects.length === 0) {
-        autoRotateEnabled = !autoRotateEnabled;
-    }
-});
-
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
 
-    if (!mouseMoved && autoRotateEnabled) {
-        // Ramp up speed if auto-rotation is enabled
-        if (rotationSpeed < maxRotationSpeed) {
-            rotationSpeed += acceleration;
-            if (rotationSpeed > maxRotationSpeed) rotationSpeed = maxRotationSpeed;
-        }
-        // Apply the rotation
-        cube.rotation.x += rotationSpeed;
-        cube.rotation.y += rotationSpeed;
-    } else {
-        // Ramp down speed if auto-rotation is disabled
-        if (rotationSpeed > 0) {
-            rotationSpeed -= deceleration;
-            if (rotationSpeed < 0) rotationSpeed = 0;
-        }
+    if (!mouseMoved) {
+        // Resume automatic rotation when the mouse is not moving
+        cube.rotation.x += 0.003;
+        cube.rotation.y += 0.003;
     }
 
     // Update edges with the same rotation
