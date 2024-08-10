@@ -45,9 +45,16 @@ function randomizeRotation() {
 }
 randomizeRotation(); // Initialize with random rotation
 
+let mouseMoved = false;
+let mouseMoveTimeout;
+
 // Parallax effect
 document.addEventListener('mousemove', (event) => {
     const { clientX, clientY } = event;
+    mouseMoved = true;
+
+    // Clear any previous timeout
+    clearTimeout(mouseMoveTimeout);
 
     // Calculate the mouse position relative to the center of the screen
     const mouseX = (clientX / window.innerWidth) * 2 - 1;
@@ -60,15 +67,22 @@ document.addEventListener('mousemove', (event) => {
     // Update edges with the same rotation
     edges.rotation.x = cube.rotation.x;
     edges.rotation.y = cube.rotation.y;
+
+    // Set a timeout to resume automatic rotation after mouse stops moving
+    mouseMoveTimeout = setTimeout(() => {
+        mouseMoved = false;
+    }, 1000); // 1 second after mouse stops moving
 });
 
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
 
-    // Slow down the rotation
-    cube.rotation.x += 0.003;
-    cube.rotation.y += 0.003;
+    if (!mouseMoved) {
+        // Resume automatic rotation when the mouse is not moving
+        cube.rotation.x += 0.003;
+        cube.rotation.y += 0.003;
+    }
 
     // Update edges with the same rotation
     edges.rotation.x = cube.rotation.x;
