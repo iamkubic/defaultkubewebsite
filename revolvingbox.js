@@ -9,66 +9,68 @@ document.body.appendChild(renderer.domElement);
 
 // Create a cube geometry
 const geometry = new THREE.BoxGeometry();
+
+// Create a material with 50% transparency
 const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
+    color: 0x00ff00, // Green color
     opacity: 0.5,
     transparent: true
 });
+
+// Create a mesh with the geometry and material
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-// Create outline material with custom shader to simulate thicker edges
-const outlineMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-        color: { value: new THREE.Color(0x000000) },
-        thickness: { value: 2.0 } // Adjust this value to make the outline thicker or thinner
-    },
-    vertexShader: `
-        uniform float thickness;
-        varying vec3 vPosition;
-        void main() {
-            vPosition = position;
-            vec4 modelViewPosition = modelViewMatrix * vec4(position, 1.0);
-            vec4 projectionPosition = projectionMatrix * modelViewPosition;
-            gl_Position = projectionPosition;
-        }
-    `,
-    fragmentShader: `
-        uniform vec3 color;
-        varying vec3 vPosition;
-        void main() {
-            float edgeWidth = 0.02;
-            float dist = length(gl_FragCoord.xy / vec2(1.0) - gl_Position.xy);
-            if (dist < thickness) {
-                gl_FragColor = vec4(color, 1.0);
-            } else {
-                discard;
-            }
-        }
-    `,
-    side: THREE.BackSide,
-    depthWrite: false
+// Create outline material
+const outlineMaterial = new THREE.LineBasicMaterial({
+    color: 0x000000, // Black color for outline
+    linewidth: 2
 });
 
+// Create edges geometry and lines
 const edges = new THREE.EdgesGeometry(geometry);
 const outline = new THREE.LineSegments(edges, outlineMaterial);
 scene.add(outline);
 
-// Animation with roll-off period
+// Variables for rotation speed and damping
 let rotationSpeed = 0.01;
-let slowingDown = false;
-let slowdownFactor = 0.99;
+let targetRotationSpeed = 0.01;
+const damping = 0.95; // Factor by which speed is reduced each frame
 
+let mouseMoving = false;
+
+// Function to handle mouse movement
+function onMouseMove() {
+    mouseMoving = true;
+    targetRotationSpeed = 0.01; // Speed when mouse is moving
+}
+
+// Function to handle mouse stop
+function onMouseStop() {
+    mouseMoving = false;
+    targetRotationSpeed = 0; // Target speed when mouse stops
+}
+
+// Attach event listeners for mouse movements
+window.addEventListener('mousemove', onMouseMove);
+window.addEventListener('mouseout', onMouseStop); // Optional: handle case when mouse leaves window
+window.addEventListener('mousedown', onMouseStop); // Optional: handle case when mouse is pressed
+
+// Render loop
 function animate() {
     requestAnimationFrame(animate);
 
-    if (rotationSpeed > 0) {
-        if (slowingDown) {
-            rotationSpeed *= slowdownFactor;
-            if (rotationSpeed < 0.001) rotationSpeed = 0; // Stop the rotation when it's very slow
+    // Gradually adjust rotation speed
+    if (mouseMoving) {
+        rotationSpeed = targetRotationSpeed;
+    } else {
+        rotationSpeed *= damping; // Apply damping to rotation speed
+        if (Math.abs(rotationSpeed) < 0.001) {
+            rotationSpeed = 0; // Stop rotation when very slow
         }
     }
 
+    // Rotate the cube for some basic animation
     cube.rotation.x += rotationSpeed;
     cube.rotation.y += rotationSpeed;
 
@@ -76,11 +78,6 @@ function animate() {
 }
 
 animate();
-
-// Start slowing down after 2 seconds
-setTimeout(() => {
-    slowingDown = true;
-}, 2000);
 
 // Handle resizing of the window
 window.addEventListener('resize', () => {
