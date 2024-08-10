@@ -47,6 +47,7 @@ randomizeRotation(); // Initialize with random rotation
 
 let mouseMoved = false;
 let mouseMoveTimeout;
+let autoRotateEnabled = true;
 
 // Parallax effect
 document.addEventListener('mousemove', (event) => {
@@ -74,12 +75,32 @@ document.addEventListener('mousemove', (event) => {
     }, 1000); // 1 second after mouse stops moving
 });
 
+// Toggle auto-rotation when clicking outside the cube
+document.addEventListener('click', (event) => {
+    const intersects = getIntersects(event);
+    if (intersects.length === 0) {
+        // Toggle auto-rotation only if the click was outside the cube
+        autoRotateEnabled = !autoRotateEnabled;
+    }
+});
+
+// Function to get the objects intersected by the click
+function getIntersects(event) {
+    const mouse = new THREE.Vector2();
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+    const raycaster = new THREE.Raycaster();
+    raycaster.setFromCamera(mouse, camera);
+    return raycaster.intersectObject(cube);
+}
+
 // Animation loop
 function animate() {
     requestAnimationFrame(animate);
 
-    if (!mouseMoved) {
-        // Resume automatic rotation when the mouse is not moving
+    if (!mouseMoved && autoRotateEnabled) {
+        // Resume automatic rotation when the mouse is not moving and auto-rotation is enabled
         cube.rotation.x += 0.003;
         cube.rotation.y += 0.003;
     }
