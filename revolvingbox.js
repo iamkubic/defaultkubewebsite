@@ -13,24 +13,3 @@ scene.add(cube);
 
 // Position the camera
 camera.position.z = 5;
-
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-
-    // Optional: Rotate the cube
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-
-    renderer.render(scene, camera);
-}
-
-// Handle window resize
-window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-});
-
-// Start the animation
-animate();
