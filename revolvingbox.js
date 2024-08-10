@@ -12,7 +12,7 @@ const material = new THREE.MeshBasicMaterial({
     color: 0xbfbfbf, // Gray color (Blender default cube color)
     wireframe: false, // No wireframe for solid appearance
     transparent: true, // Enable transparency
-    opacity: 0.5 // Set opacity (0 is fully transparent, 1 is fully opaque)
+    opacity: 0.5 // Set opacity to 50%
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
