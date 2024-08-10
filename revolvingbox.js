@@ -7,12 +7,15 @@ const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+// Set background color to light gray
+renderer.setClearColor(0xf8f8f8); // Same as #f8f8f8
+
 // Create a cube geometry
 const geometry = new THREE.BoxGeometry();
 
-// Create a material with 50% transparency
+// Create a material with 50% transparency and default Blender cube color
 const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00, // Green color
+    color: 0xeeeeee, // Default Blender cube color
     opacity: 0.5,
     transparent: true
 });
@@ -20,17 +23,6 @@ const material = new THREE.MeshBasicMaterial({
 // Create a mesh with the geometry and material
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
-
-// Create outline material
-const outlineMaterial = new THREE.LineBasicMaterial({
-    color: 0x000000, // Black color for outline
-    linewidth: 2
-});
-
-// Create edges geometry and lines
-const edges = new THREE.EdgesGeometry(geometry);
-const outline = new THREE.LineSegments(edges, outlineMaterial);
-scene.add(outline);
 
 // Variables for rotation speed and damping
 let rotationSpeedX = 0;
