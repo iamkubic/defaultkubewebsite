@@ -10,7 +10,9 @@ document.body.appendChild(renderer.domElement);
 const geometry = new THREE.BoxGeometry(1, 1, 1); // Size reduced to 1x1x1
 const material = new THREE.MeshBasicMaterial({
     color: 0xbfbfbf, // Gray color (Blender default cube color)
-    wireframe: false // No wireframe for solid appearance
+    wireframe: false, // No wireframe for solid appearance
+    transparent: true, // Enable transparency
+    opacity: 0.5 // Set opacity (0 is fully transparent, 1 is fully opaque)
 });
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
